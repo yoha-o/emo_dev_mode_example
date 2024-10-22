@@ -11,8 +11,8 @@ class GameMode(Enum):
 
 class RpsHand(Enum):
 	ROCK = (0, 'グー')
-	PAPER = (1, 'チョキ')
-	SCISSORS = (2, 'パー')
+	PAPER = (1, 'パー')
+	SCISSORS = (2, 'チョキ')
 
 	@classmethod
 	def from_value(cls, value):

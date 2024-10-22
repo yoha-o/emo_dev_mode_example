@@ -35,11 +35,8 @@ game_mode = GameMode.NEUTRAL
 
 @client.event('vui_command.detected')
 def vui_command_callback(body):
-	print(body)
-	# script_dir = os.path.dirname(os.path.abspath(__file__))
-	# audio_data_path = f'{script_dir}/../assets/gameover.mp3'
-	# room.send_audio_msg(audio_data_path)
 	global game_mode
+
 	if game_mode != GameMode.NEUTRAL:
 		game_mode = GameMode.NEUTRAL
 		print(strings['emo_games']['cancel'])
@@ -54,6 +51,9 @@ def record_button_callback(body):
 		print(strings['rps']['start'])
 	elif game_mode == GameMode.RPS:
 		rps.choose(RpsHand.ROCK, rps_callback)
+	if game_mode == GameMode.MGE:
+		game_mode = GameMode.NEUTRAL
+		print(strings['emo_games']['happy_end'])
 
 
 @client.event('play_button.pressed')
@@ -73,7 +73,7 @@ def function_button_callback(body):
 
 	if game_mode == GameMode.SELECT:
 		game_mode = GameMode.MGE
-		print('メタルギアエモちゃん開始')
+		print(strings['mge']['start'])
 	elif game_mode == GameMode.RPS:
 		rps.choose(RpsHand.SCISSORS, rps_callback)
 
@@ -92,9 +92,24 @@ def accel_sensor_callback(body):
 # 	print(body)
 
 
-# @client.event('radar.detected')
-# def radar_sensor_callback(body):
-# 	print(body)
+@client.event('radar.detected')
+def radar_sensor_callback(body):
+	global game_mode
+
+	if game_mode == GameMode.MGE:
+		script_dir = os.path.dirname(os.path.abspath(__file__))
+		if body.data.radar.begin == True and body.data.radar.near_begin == False:
+			print(strings['mge']['caution'])
+		elif body.data.radar.end == True and body.data.radar.near_end == False:
+			print(strings['mge']['clearup'])
+		elif game_mode == GameMode.MGE and body.data.radar.near_begin == True:
+			game_mode = GameMode.NEUTRAL
+			audio_alert_path = f'{script_dir}/../assets/alert.mp3'
+			room.send_audio_msg(audio_alert_path)
+			print(strings['mge']['found'])
+			room.send_msg(strings['mge']['found'])
+			audio_gameover_path = f'{script_dir}/../assets/gameover.mp3'
+			room.send_audio_msg(audio_gameover_path)
 
 
 def rps_callback(status):
@@ -108,11 +123,14 @@ def rps_callback(status):
 		if status.winning == 3:
 			print(strings['emo_games']['happy_end'])
 			game_mode = GameMode.NEUTRAL
-		elif status.lose == 5:
+		elif status.life == 0:
 			print(strings['emo_games']['bad_end'])
 			game_mode = GameMode.NEUTRAL
 		else:
-			print(strings['rps']['continue'])
+			if status.result == RpsResult.WIN:
+				print(f'今{status.winning}連勝中だよ。{strings['rps']['continue']}')
+			else:
+				print(f'チャンスはあと{status.life}回だよ。{strings['rps']['continue']}')
 
 
 secret_key = client.start_webhook_event()
