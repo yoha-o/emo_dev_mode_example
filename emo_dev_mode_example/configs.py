@@ -21,7 +21,7 @@ class EnvLoader:
 
 class StringsLoader:
     _instance = None
-    _strings_resource = None
+    resources = None
 
     def __new__(cls):
         if cls._instance is None:
@@ -31,4 +31,4 @@ class StringsLoader:
 
     def _load_strings(self):
         with open('strings.yaml', encoding='utf-8') as f:
-            self._strings_resource = yaml.safe_load(f)
+            self.resources = yaml.safe_load(f)
