@@ -5,7 +5,7 @@ from enums import GameMode, RpsHand, EmonatorAns
 from emo_client import EmoClient
 from configs import EnvLoader, StringsLoader
 from rps import EmoRps
-import emonator
+from emonator import Emonator
 import mge
 
 
@@ -19,6 +19,7 @@ room = emo_client.room
 game_mode = GameMode.NEUTRAL
 
 emo_rps = None
+emonator = None
 
 
 # @client.event('trigger_word.detected')
@@ -48,7 +49,7 @@ def record_button_callback(body):
 	elif game_mode == GameMode.RPS:
 		emo_rps.do_rps(RpsHand.ROCK)
 	elif game_mode == GameMode.EMONATOR:
-		emonator.answer_question(EmonatorAns.YES, gameover_callback)
+		emonator.answer_question(EmonatorAns.YES)
 	elif game_mode == GameMode.MGE:
 		game_mode = GameMode.NEUTRAL
 		print(strings_resource['mge']['win_ending'])
@@ -57,17 +58,18 @@ def record_button_callback(body):
 
 @client.event('play_button.pressed')
 def play_button_callback(body):
-	global game_mode, emo_rps
+	global game_mode, emo_rps, emonator
 
 	if game_mode == GameMode.SELECT:
 		game_mode = GameMode.EMONATOR
+		emonator = Emonator(gameover_callback)
 		print(strings_resource['emonator']['start'])
 		# room.send_msg(strings_resource['emonator']['start'])
-		emonator.play(gameover_callback)
+		emonator.play()
 	elif game_mode == GameMode.RPS:
 		emo_rps.do_rps(RpsHand.SCISSORS)
 	elif game_mode == GameMode.EMONATOR:
-		emonator.answer_question(EmonatorAns.NO, gameover_callback)
+		emonator.answer_question(EmonatorAns.NO)
 	elif game_mode == GameMode.MGE:
 		mge.countdown()
 
@@ -81,7 +83,7 @@ def function_button_callback(body):
 		print(strings_resource['mge']['start'])
 		# room.send_msg(strings_resource['mge']['start'])
 	elif game_mode == GameMode.EMONATOR:
-		emonator.answer_question(EmonatorAns.IDK, gameover_callback)
+		emonator.answer_question(EmonatorAns.IDK)
 	elif game_mode == GameMode.RPS:
 		emo_rps.do_rps(RpsHand.PAPER)
 
@@ -96,11 +98,11 @@ def accel_sensor_callback(body):
 		# room.send_msg(strings_resource['emo_games']['start'])
 	elif game_mode == GameMode.EMONATOR:
 		if body.data.accel.kind == 'lift':
-			emonator.answer_question(EmonatorAns.PY, gameover_callback)
+			emonator.answer_question(EmonatorAns.PY)
 		elif body.data.accel.kind == 'lying_down':
-			emonator.answer_question(EmonatorAns.PN, gameover_callback)
+			emonator.answer_question(EmonatorAns.PN)
 		elif body.data.accel.kind == 'shaken':
-			emonator.answer_question(EmonatorAns.BACK, gameover_callback)
+			emonator.answer_question(EmonatorAns.BACK)
 	
 
 # @client.event('illuminance.changed')
