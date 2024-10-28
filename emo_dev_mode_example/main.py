@@ -31,6 +31,7 @@ def vui_command_callback(body):
 	if game_mode != GameMode.NEUTRAL:
 		game_mode = GameMode.NEUTRAL
 		print(strings_resource['emo_games']['cancel'])
+		room.send_msg(strings_resource['emo_games']['cancel'])
 
 
 @client.event('record_button.pressed')
@@ -40,13 +41,15 @@ def record_button_callback(body):
 	if game_mode == GameMode.SELECT:
 		game_mode = GameMode.RPS
 		print(strings_resource['rps']['start'])
+		room.send_msg(strings_resource['rps']['start'])
 	elif game_mode == GameMode.RPS:
 		rps.choose(RpsHand.ROCK, gameover_callback)
 	elif game_mode == GameMode.EMONATOR:
 		emonator.answer_question(EmonatorAns.YES, gameover_callback)
 	elif game_mode == GameMode.MGE:
 		game_mode = GameMode.NEUTRAL
-		print(strings_resource['mge']['happy_end'])
+		print(strings_resource['mge']['win_ending'])
+		room.send_msg(strings_resource['mge']['win_ending'])
 
 
 @client.event('play_button.pressed')
@@ -56,6 +59,7 @@ def play_button_callback(body):
 	if game_mode == GameMode.SELECT:
 		game_mode = GameMode.EMONATOR
 		print(strings_resource['emonator']['start'])
+		room.send_msg(strings_resource['emonator']['start'])
 		emonator.play(gameover_callback)
 	elif game_mode == GameMode.RPS:
 		rps.choose(RpsHand.SCISSORS, gameover_callback)
@@ -72,6 +76,7 @@ def function_button_callback(body):
 	if game_mode == GameMode.SELECT:
 		game_mode = GameMode.MGE
 		print(strings_resource['mge']['start'])
+		room.send_msg(strings_resource['mge']['start'])
 	elif game_mode == GameMode.EMONATOR:
 		emonator.answer_question(EmonatorAns.IDK, gameover_callback)
 	elif game_mode == GameMode.RPS:
@@ -85,6 +90,7 @@ def accel_sensor_callback(body):
 	if game_mode == GameMode.NEUTRAL and body.data.accel.kind == 'upside_down':
 		game_mode = GameMode.SELECT
 		print(strings_resource['emo_games']['start'])
+		room.send_msg(strings_resource['emo_games']['start'])
 	elif game_mode == GameMode.EMONATOR:
 		if body.data.accel.kind == 'lift':
 			emonator.answer_question(EmonatorAns.PY, gameover_callback)

@@ -50,21 +50,32 @@ def choose(my_hand, callback):
 def _result(my_hand, emo_hand, judge, callback):
     global winning, life
 
-    print('ぽん！、君は' + my_hand.value[1] + '、ぼくは' + emo_hand.value[1])
+    msg_hands = f'ぽん！、君は{my_hand.value[1]}、ぼくは{emo_hand.value[1]}'
+    print(msg_hands)
+    room.send_msg(msg_hands)
     if judge == RpsJudge.DRAW:
         print(strings_resource['rps']['draw_continue'])
+        room.send_msg(strings_resource['rps']['draw_continue'])
     else:
-        print('君の' + judge.value + 'だ。')
+        msg_result = f'君の{judge.value}だ。'
+        print(msg_result)
+        room.send_msg(msg_result)
         if winning == 3:
-            print(strings_resource['rps']['happy_end'])
+            print(strings_resource['rps']['win_ending'])
+            room.send_msg(strings_resource['rps']['win_ending'])
             callback()
             winning, life = 0, 5
         elif life == 0:
-            print(strings_resource['rps']['bad_end'])
+            print(strings_resource['rps']['lose_ending'])
+            room.send_msg(strings_resource['rps']['lose_ending'])
             callback()
             winning, life = 0, 5
         else:
             if judge == RpsJudge.WIN:
-                print(f'今{winning}連勝中だよ。{strings_resource['rps']['continue']}')
+                msg_winning = f'今{winning}連勝中だよ。{strings_resource['rps']['continue']}'
+                print(msg_winning)
+                room.send_msg(msg_winning)
             else:
-                print(f'チャンスはあと{life}回だよ。{strings_resource['rps']['continue']}')
+                msg_lose = f'チャンスはあと{life}回だよ。{strings_resource['rps']['continue']}'
+                print(msg_lose)
+                room.send_msg(msg_lose)
