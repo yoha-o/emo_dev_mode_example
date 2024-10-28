@@ -1,4 +1,5 @@
 from enum import Enum
+import random as rand
 
 
 class GameMode(Enum):
@@ -10,15 +11,17 @@ class GameMode(Enum):
 
 
 class RpsHand(Enum):
-	ROCK = (0, 'グー')
-	SCISSORS = (1, 'チョキ')
-	PAPER = (2, 'パー')
+	ROCK = ('グー')
+	SCISSORS = ('チョキ')
+	PAPER = ('パー')
 
 	@classmethod
-	def from_value(cls, value):
-		for item in cls:
-			if item.value[0] == value:
-			    return item 
+	def gen_hand(cls):
+		rps_id = rand.randint(0, 2)
+		match rps_id:
+			case 0: return RpsHand.ROCK
+			case 1: return RpsHand.SCISSORS
+			case 2: return RpsHand.PAPER
 
 
 class RpsJudge(Enum):

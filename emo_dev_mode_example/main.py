@@ -4,7 +4,7 @@ from emo_platform import WebHook, EmoPlatformError
 from enums import GameMode, RpsHand, EmonatorAns
 from emo_client import EmoClient
 from configs import EnvLoader, StringsLoader
-import rps
+from rps import EmoRps
 import emonator
 import mge
 
@@ -17,6 +17,8 @@ app = FastAPI()
 client = emo_client.client
 room = emo_client.room
 game_mode = GameMode.NEUTRAL
+
+emo_rps = None
 
 
 # @client.event('trigger_word.detected')
@@ -31,38 +33,39 @@ def vui_command_callback(body):
 	if game_mode != GameMode.NEUTRAL:
 		game_mode = GameMode.NEUTRAL
 		print(strings_resource['emo_games']['cancel'])
-		room.send_msg(strings_resource['emo_games']['cancel'])
+		# room.send_msg(strings_resource['emo_games']['cancel'])
 
 
 @client.event('record_button.pressed')
 def record_button_callback(body):
-	global game_mode
+	global game_mode, emo_rps
 
 	if game_mode == GameMode.SELECT:
 		game_mode = GameMode.RPS
+		emo_rps = EmoRps(gameover_callback)
 		print(strings_resource['rps']['start'])
-		room.send_msg(strings_resource['rps']['start'])
+		# room.send_msg(strings_resource['rps']['start'])
 	elif game_mode == GameMode.RPS:
-		rps.choose(RpsHand.ROCK, gameover_callback)
+		emo_rps.do_rps(RpsHand.ROCK)
 	elif game_mode == GameMode.EMONATOR:
 		emonator.answer_question(EmonatorAns.YES, gameover_callback)
 	elif game_mode == GameMode.MGE:
 		game_mode = GameMode.NEUTRAL
 		print(strings_resource['mge']['win_ending'])
-		room.send_msg(strings_resource['mge']['win_ending'])
+		# room.send_msg(strings_resource['mge']['win_ending'])
 
 
 @client.event('play_button.pressed')
 def play_button_callback(body):
-	global game_mode
+	global game_mode, emo_rps
 
 	if game_mode == GameMode.SELECT:
 		game_mode = GameMode.EMONATOR
 		print(strings_resource['emonator']['start'])
-		room.send_msg(strings_resource['emonator']['start'])
+		# room.send_msg(strings_resource['emonator']['start'])
 		emonator.play(gameover_callback)
 	elif game_mode == GameMode.RPS:
-		rps.choose(RpsHand.SCISSORS, gameover_callback)
+		emo_rps.do_rps(RpsHand.SCISSORS)
 	elif game_mode == GameMode.EMONATOR:
 		emonator.answer_question(EmonatorAns.NO, gameover_callback)
 	elif game_mode == GameMode.MGE:
@@ -71,16 +74,16 @@ def play_button_callback(body):
 
 @client.event('function_button.pressed')
 def function_button_callback(body):
-	global game_mode
+	global game_mode, emo_rps
 
 	if game_mode == GameMode.SELECT:
 		game_mode = GameMode.MGE
 		print(strings_resource['mge']['start'])
-		room.send_msg(strings_resource['mge']['start'])
+		# room.send_msg(strings_resource['mge']['start'])
 	elif game_mode == GameMode.EMONATOR:
 		emonator.answer_question(EmonatorAns.IDK, gameover_callback)
 	elif game_mode == GameMode.RPS:
-		rps.choose(RpsHand.PAPER, gameover_callback)
+		emo_rps.do_rps(RpsHand.PAPER)
 
 
 @client.event('accel.detected')
@@ -90,7 +93,7 @@ def accel_sensor_callback(body):
 	if game_mode == GameMode.NEUTRAL and body.data.accel.kind == 'upside_down':
 		game_mode = GameMode.SELECT
 		print(strings_resource['emo_games']['start'])
-		room.send_msg(strings_resource['emo_games']['start'])
+		# room.send_msg(strings_resource['emo_games']['start'])
 	elif game_mode == GameMode.EMONATOR:
 		if body.data.accel.kind == 'lift':
 			emonator.answer_question(EmonatorAns.PY, gameover_callback)
@@ -121,7 +124,7 @@ secret_key = client.start_webhook_event()
 
 
 @app.get('/health')
-async def do_submit():
+async def check_health():
 	return {'health': 'OK'}
 
 
