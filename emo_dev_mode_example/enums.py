@@ -25,3 +25,12 @@ class RpsJudge(Enum):
 	DRAW = 'あいこ'
 	WIN = 'かち'
 	LOSE = 'まけ'
+
+
+class EmonatorAns(Enum):
+	YES = ('y', 'はい')
+	NO = ('n', 'いいえ')
+	IDK = ('idk', 'わからない')
+	PY = ('p', 'たぶんそう・部分的にそう')
+	PN = ('pn', 'たぶん違う・そうでもない')
+	BACK = ('b', '前の質問に戻る')

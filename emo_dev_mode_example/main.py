@@ -1,11 +1,12 @@
 from fastapi import FastAPI, Request
 from pyngrok import ngrok
 from emo_platform import WebHook, EmoPlatformError
-from enums import GameMode, RpsHand
+from enums import GameMode, RpsHand, EmonatorAns
 from emo_client import EmoClient
 from configs import EnvLoader, StringsLoader
-import mge
 import rps
+import emonator
+import mge
 
 
 env_loader = EnvLoader()
@@ -41,6 +42,8 @@ def record_button_callback(body):
 		print(strings_resource['rps']['start'])
 	elif game_mode == GameMode.RPS:
 		rps.choose(RpsHand.ROCK, gameover_callback)
+	elif game_mode == GameMode.EMONATOR:
+		emonator.answer_question(EmonatorAns.YES, gameover_callback)
 	elif game_mode == GameMode.MGE:
 		game_mode = GameMode.NEUTRAL
 		print(strings_resource['mge']['happy_end'])
@@ -52,9 +55,12 @@ def play_button_callback(body):
 
 	if game_mode == GameMode.SELECT:
 		game_mode = GameMode.EMONATOR
-		print('エモネイター開始')
+		print(strings_resource['emonator']['start'])
+		emonator.play(gameover_callback)
 	elif game_mode == GameMode.RPS:
 		rps.choose(RpsHand.SCISSORS, gameover_callback)
+	elif game_mode == GameMode.EMONATOR:
+		emonator.answer_question(EmonatorAns.NO, gameover_callback)
 	elif game_mode == GameMode.MGE:
 		mge.countdown()
 
@@ -66,6 +72,8 @@ def function_button_callback(body):
 	if game_mode == GameMode.SELECT:
 		game_mode = GameMode.MGE
 		print(strings_resource['mge']['start'])
+	elif game_mode == GameMode.EMONATOR:
+		emonator.answer_question(EmonatorAns.IDK, gameover_callback)
 	elif game_mode == GameMode.RPS:
 		rps.choose(RpsHand.PAPER, gameover_callback)
 
@@ -77,6 +85,13 @@ def accel_sensor_callback(body):
 	if game_mode == GameMode.NEUTRAL and body.data.accel.kind == 'upside_down':
 		game_mode = GameMode.SELECT
 		print(strings_resource['emo_games']['start'])
+	elif game_mode == GameMode.EMONATOR:
+		if body.data.accel.kind == 'lift':
+			emonator.answer_question(EmonatorAns.PY, gameover_callback)
+		elif body.data.accel.kind == 'lying_down':
+			emonator.answer_question(EmonatorAns.PN, gameover_callback)
+		elif body.data.accel.kind == 'shaken':
+			emonator.answer_question(EmonatorAns.BACK, gameover_callback)
 	
 
 # @client.event('illuminance.changed')

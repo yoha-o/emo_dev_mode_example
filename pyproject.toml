@@ -13,6 +13,7 @@ pyngrok = "^7.2.0"
 fastapi = "^0.115.2"
 uvicorn = "^0.31.1"
 pyyaml = "^6.0.2"
+akinator-python = "^1.6.0"
 
 
 [build-system]
