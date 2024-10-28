@@ -6,7 +6,7 @@ from emo_client import EmoClient
 from configs import EnvLoader, StringsLoader
 from rps import EmoRps
 from emonator import Emonator
-import mge
+from mge import MetalGearEmo
 
 
 env_loader = EnvLoader()
@@ -20,6 +20,7 @@ game_mode = GameMode.NEUTRAL
 
 emo_rps = None
 emonator = None
+metal_gear_emo = None
 
 
 # @client.event('trigger_word.detected')
@@ -71,15 +72,16 @@ def play_button_callback(body):
 	elif game_mode == GameMode.EMONATOR:
 		emonator.answer_question(EmonatorAns.NO)
 	elif game_mode == GameMode.MGE:
-		mge.countdown()
+		metal_gear_emo.countdown()
 
 
 @client.event('function_button.pressed')
 def function_button_callback(body):
-	global game_mode, emo_rps
+	global game_mode, emo_rps, metal_gear_emo
 
 	if game_mode == GameMode.SELECT:
 		game_mode = GameMode.MGE
+		metal_gear_emo = MetalGearEmo(gameover_callback)
 		print(strings_resource['mge']['start'])
 		# room.send_msg(strings_resource['mge']['start'])
 	elif game_mode == GameMode.EMONATOR:
@@ -113,7 +115,7 @@ def accel_sensor_callback(body):
 @client.event('radar.detected')
 def radar_sensor_callback(body):
 	if game_mode == GameMode.MGE:
-		mge.detectIntruder(body.data.radar, gameover_callback)
+		metal_gear_emo.detectIntruder(body.data.radar)
 
 
 
