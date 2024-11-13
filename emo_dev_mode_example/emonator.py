@@ -11,7 +11,7 @@ room = emo_client.room
 
 class Emonator:
     akinator = Akinator()
-    isFinalQuestion = False
+    is_final_question = False
     gameover_callback = None
 
     def __init__(self, callback):
@@ -30,7 +30,7 @@ class Emonator:
 
     def answer_question(self, ans):
         print(f'回答：{ans.value[1]}')
-        if self.isFinalQuestion:
+        if self.is_final_question:
             if ans == EmonatorAns.NO:
                 # akinator.exclude()
                 self.gameover_callback()
@@ -44,25 +44,28 @@ class Emonator:
                 self.gameover_callback()
                 print(strings_resource['emonator']['correct_ans'])
                 # room.send_msg(strings_resource['emonator']['correct_ans'])
-        else:
-            try:
-                if ans == EmonatorAns.BACK:
-                    self.akinator.go_back()
-                    q = self.akinator.question
-                    print(q)
-                    # room.send_msg(q)
-                else:
-                    self.akinator.post_answer(ans.value[0])
-                    if self.akinator.answer_id:
-                        self.isFinalQuestion = True
-                        msg_final_q = f'君が思い浮かべているのは・・・{self.akinator.description}の{self.akinator.name}だね？合っていたらおなかの上のボタン、違っていたら真ん中のボタンを押してね。'
-                        print(msg_final_q)
-                        # room.send_msg(msg_final_q)
-                    else:
-                        q = self.akinator.question
-                        print(q)
-                        # room.send_msg(q)
-            except Exception as _:
-                self.gameover_callback()
-                print(strings_resource['emo_games']['error'])
-                # room.send_msg(strings_resource['emo_games']['error'])
+            return
+
+        try:
+            if ans == EmonatorAns.BACK:
+                self.akinator.go_back()
+                q = self.akinator.question
+                print(q)
+                # room.send_msg(q)
+                return
+            
+            self.akinator.post_answer(ans.value[0])
+            if self.akinator.answer_id:
+                self.is_final_question = True
+                msg_final_q = f'君が思い浮かべているのは・・・{self.akinator.description}の{self.akinator.name}だね？合っていたらおなかの上のボタン、違っていたら真ん中のボタンを押してね。'
+                print(msg_final_q)
+                # room.send_msg(msg_final_q)
+                return
+
+            q = self.akinator.question
+            print(q)
+            # room.send_msg(q)
+        except Exception as _:
+            self.gameover_callback()
+            print(strings_resource['emo_games']['error'])
+            # room.send_msg(strings_resource['emo_games']['error'])
