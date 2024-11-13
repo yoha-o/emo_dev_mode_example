@@ -90,7 +90,7 @@ class MetalGearEmo:
 
     def push_bocco_button(self):
         if not self.during_game : return
-        self.gameover_callback
+        self.gameover_callback()
         self.during_game = False
         print(strings_resource['mge']['win_ending'])
         room.send_msg(strings_resource['mge']['win_ending'])

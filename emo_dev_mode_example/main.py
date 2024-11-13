@@ -41,7 +41,7 @@ def vui_command_callback(body):
 	if game_mode != GameMode.NEUTRAL:
 		game_mode = GameMode.NEUTRAL
 		print(strings_resource['emo_games']['cancel'])
-		# room.send_msg(strings_resource['emo_games']['cancel'])
+		room.send_msg(strings_resource['emo_games']['cancel'])
 
 
 @client.event('record_button.pressed')
@@ -52,7 +52,7 @@ def record_button_callback(body):
 		game_mode = GameMode.RPS
 		emo_rps = EmoRps(gameover_callback)
 		print(strings_resource['rps']['start'])
-		# room.send_msg(strings_resource['rps']['start'])
+		room.send_msg(strings_resource['rps']['start'])
 	elif game_mode == GameMode.RPS:
 		emo_rps.do_rps(RpsHand.ROCK)
 	elif game_mode == GameMode.EMONATOR:
@@ -70,7 +70,7 @@ def play_button_callback(body):
 		game_mode = GameMode.EMONATOR
 		emonator = Emonator(gameover_callback)
 		print(strings_resource['emonator']['start'])
-		# room.send_msg(strings_resource['emonator']['start'])
+		room.send_msg(strings_resource['emonator']['start'])
 		emonator.play()
 	elif game_mode == GameMode.RPS:
 		emo_rps.do_rps(RpsHand.SCISSORS)
@@ -105,7 +105,7 @@ def accel_sensor_callback(body):
 	if game_mode == GameMode.NEUTRAL and body.data.accel.kind == 'upside_down':
 		game_mode = GameMode.SELECT
 		print(strings_resource['emo_games']['start'])
-		# room.send_msg(strings_resource['emo_games']['start'])
+		room.send_msg(strings_resource['emo_games']['start'])
 	elif game_mode == GameMode.EMONATOR:
 		if body.data.accel.kind == 'lift':
 			emonator.answer_question(EmonatorAns.PY)

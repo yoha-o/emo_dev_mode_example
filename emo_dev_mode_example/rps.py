@@ -47,30 +47,30 @@ class EmoRps:
         
         msg_hands = f'ぽん！、君は{my_hand.value}、ぼくは{emo_hand.value}'
         print(msg_hands)
-        # room.send_msg(msg_hands)
+        room.send_msg(msg_hands)
         if judge == RpsJudge.DRAW:
             print(strings_resource['rps']['draw_continue'])
-            # room.send_msg(strings_resource['rps']['draw_continue'])
+            room.send_msg(strings_resource['rps']['draw_continue'])
             return
         
         msg_result = f'君の{judge.value}だ。'
         print(msg_result)
-        # room.send_msg(msg_result)
+        room.send_msg(msg_result)
         if self.winning == 3:
             print(strings_resource['rps']['win_ending'])
-            # room.send_msg(strings_resource['rps']['win_ending'])
+            room.send_msg(strings_resource['rps']['win_ending'])
             self.gameover_callback()
         elif self.life == 0:
             print(strings_resource['rps']['lose_ending'])
-            # room.send_msg(strings_resource['rps']['lose_ending'])
+            room.send_msg(strings_resource['rps']['lose_ending'])
             self.gameover_callback()
         else:
             if judge == RpsJudge.WIN:
                 msg_winning = f'今{self.winning}連勝中だよ。{strings_resource['rps']['continue']}'
                 print(msg_winning)
-                # room.send_msg(msg_winning)
+                room.send_msg(msg_winning)
                 return
 
             msg_lose = f'チャンスはあと{self.life}回だよ。{strings_resource['rps']['continue']}'
             print(msg_lose)
-            # room.send_msg(msg_lose)
+            room.send_msg(msg_lose)
